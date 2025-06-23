@@ -1,9 +1,6 @@
-let nameH1;
-let birthYearSpan;
-let heightSpan;
-let massSpan;
-let filmsDiv;
-let planetDiv;
+let filmH1;
+let charactersUl;
+let planetsUl;
 const baseUrl = `http://localhost:9001/api`;
 
 // Runs on page load
@@ -13,50 +10,31 @@ addEventListener('DOMContentLoaded', () => {
   planetsUl = document.querySelector('#planets>ul');
   const sp = new URLSearchParams(window.location.search)
   const id = sp.get('id')
-  console.log(id);
   getFilm(id)
 });
 
 async function getFilm(id) {
-  let character;
+  let film;
   try {
-    film = await fetchFilm(id)
-    console.log(film)
-    film.characters = await fetchCharacters(id)
-    film.planets = await fetchPlanets(id)
-    console.log(film.characters);
-    console.log(film.planets);
+    film = await fetchAPI(`/films/${id}`)
+    film.characters = await fetchAPI(`films/${id}/characters`)
+    film.planets = await fetchAPI(`films/${id}/planets`)
+    renderFilm(film);
   }
   catch (ex) {
     console.error(`Error reading film ${id} data.`, ex.message);
   }
-  renderFilm(film);
-
-}
-async function fetchFilm(id) {
-  let filmUrl = `${baseUrl}/films/${id}`;
-  console.log(filmUrl);
-  return await fetch(filmUrl)
-    .then(res => res.json())
 }
 
-async function fetchCharacters(id) {
-    let characterUrl = `${baseUrl}/films/${id}/characters`;
-    console.log(characterUrl);
-    return await fetch(characterUrl)
-        .then(res => res.json())
-}
-
-async function fetchPlanets(id) {
-    let planetUrl = `${baseUrl}/films/${id}/planets`;
-    console.log(planetUrl);
-    return await fetch(planetUrl)
+async function fetchAPI(extraUrl) {
+    let url = `${baseUrl}/${extraUrl}`;
+    return await fetch(url)
         .then(res => res.json())
 }
 
 const renderFilm = film => {
     console.log(film.title)
-    document.title = `SWAPI - ${film?.title}`;  // Just to make the browser tab say their name
+    document.title = `SWAPI - ${film?.title}`;
     filmH1.textContent = film.title;
 
     const charList = film.characters.map(character => `<li><a href="/character.html?id=${character.id}">${character.name}</li>`)
