@@ -37,7 +37,6 @@ async function getFilm(id) {
   let film;
   try {
     film = await fetchAPI(`/films/${id}`)
-    console.log(film)
     film.characters = await fetchAPI(`films/${id}/characters`)
     film.planets = await fetchAPI(`films/${id}/planets`)
     renderFilm(film);
@@ -54,16 +53,14 @@ async function fetchAPI(extraUrl) {
 }
 
 const renderFilm = film => {
-    console.log(film.title)
     document.title = `SWAPI - ${film?.title}`;
-    console.log(film.direct)
     filmH1.textContent = film.title;
     dirSp.textContent = film.director;
     prodSp.textContent = film.producer;
     dateSp.textContent = film.release_date;
     epSp.textContent = film.episode_id;
-    opening_crawlP.textContent = film.opening_crawl; 
 
+    opening_crawlP.textContent = film.opening_crawl; 
 
     const charList = film.characters.map(character => `<li><a href="/character.html?id=${character.id}">${character.name}</li>`)
     charactersUl.innerHTML = charList.join("");
